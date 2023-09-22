@@ -1,6 +1,7 @@
 package com.example.opengl.samples.render
 
 import android.opengl.GLES30
+import com.example.opengl.samples.utils.RenderUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -26,8 +27,8 @@ class TriangleRenderer {
     private var program: Int = -1
 
     fun init() {
-        val vertexShader: Int = loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode)
-        val fragmentShader: Int = loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode)
+        val vertexShader: Int = RenderUtil.loadShader(GLES30.GL_VERTEX_SHADER, vertexShaderCode)
+        val fragmentShader: Int = RenderUtil.loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentShaderCode)
 
         program = GLES30.glCreateProgram().also {
             GLES30.glAttachShader(it, vertexShader)
