@@ -2,8 +2,14 @@ package com.example.opengl.samples.utils
 
 import android.opengl.GLES30
 import android.util.Log
+import com.example.opengl.samples.render.TriangleRenderObj
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
 
 object RenderUtil {
+    private const val TAG = "RenderUtil"
+
     @JvmStatic
     fun loadShader(type: Int, shaderCode: String): Int {
         // 创建着色器对象
@@ -21,10 +27,8 @@ object RenderUtil {
         if (compileStatus[0] == 0) {
             // 编译失败，打印错误日志并删除着色器对象
             val errorMsg = GLES30.glGetShaderInfoLog(shader)
+            Log.e(TAG, "Shader compilation failed: $errorMsg, shader code: $shaderCode")
             GLES30.glDeleteShader(shader)
-            Log.e("RenderUtil", "Shader compilation failed: $errorMsg, shader code: $shaderCode")
-        } else {
-            Log.i("RenderUtil", "Shader compilation succeed!")
         }
 
         return shader
@@ -50,8 +54,20 @@ object RenderUtil {
             val errorMsg = GLES30.glGetProgramInfoLog(program)
             GLES30.glDeleteProgram(program)
             throw RuntimeException("Program link failed: $errorMsg")
+        } else {
+            Log.i(TAG, "createProgram, programId: $program")
         }
 
         return program
     }
+
+    @JvmStatic
+    fun createVertexBuffer(floatAttrs: FloatArray): FloatBuffer = ByteBuffer
+        .allocateDirect(floatAttrs.size * Float.SIZE_BYTES)
+        .order(ByteOrder.nativeOrder())
+        .asFloatBuffer()
+        .apply {
+            put(floatAttrs)
+            position(0)
+        }
 }
