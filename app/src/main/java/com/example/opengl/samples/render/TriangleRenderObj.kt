@@ -1,6 +1,7 @@
 package com.example.opengl.samples.render
 
 import android.opengl.GLES30
+import android.util.Log
 import com.example.opengl.samples.utils.RenderUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -18,19 +19,21 @@ class TriangleRenderObj : IRenderObj {
         // the coordinates of objects that use this vertex shader.
         "uniform mat4 uMVPMatrix;   \n" +
                 "attribute vec4 vPosition;  \n" +
+                "attribute vec4 vColor; \n" +
+                "varying vec4 vertexColor; \n" +
                 "void main(){               \n" +
-                // The matrix must be included as part of gl_Position
-                // Note that the uMVPMatrix factor *must be first* in order
-                // for the matrix multiplication product to be correct.
-                " gl_Position = uMVPMatrix * vPosition; \n" +
-
+                    // The matrix must be included as part of gl_Position
+                    // Note that the uMVPMatrix factor *must be first* in order
+                    // for the matrix multiplication product to be correct.
+                    "gl_Position = uMVPMatrix * vPosition; \n" +
+                    "vertexColor = vColor; \n" +
                 "}  \n"
 
     private val fragmentShaderCode =
         "precision mediump float;" +
-                "uniform vec4 vColor;" +
+                "varying vec4 vertexColor;" +
                 "void main() {" +
-                "  gl_FragColor = vColor;" +
+                "  gl_FragColor = vertexColor;" +
                 "}"
 
     private val vertexCount = triangleCoords.size / COORDS_PER_VERTEX
@@ -53,7 +56,8 @@ class TriangleRenderObj : IRenderObj {
 
         positionHandle = GLES30.glGetAttribLocation(program, "vPosition")
         muMVPMatrixHandle = GLES30.glGetUniformLocation(program, "uMVPMatrix")
-        colorHandle = GLES30.glGetUniformLocation(program, "vColor")
+        colorHandle = GLES30.glGetAttribLocation(program, "vColor")
+        Log.i(TAG, "color handle: $colorHandle")
 
         GLES30.glUseProgram(program)
     }
@@ -91,6 +95,7 @@ class TriangleRenderObj : IRenderObj {
     }
 
     companion object {
+        private const val TAG = "Triangle"
         private const val COORDS_PER_VERTEX = 3
         private const val COUNT_PER_COLOR = 4
 
