@@ -110,7 +110,7 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             // 绘制网格
             //grid.draw(mvpMatrix);
             // Render content obj
-            RenderObjDispatcher.renderObj(ObjType.OBJ_CUBE, combinedMatrix)
+            RenderObjDispatcher.renderObj(ObjType.OBJ_SIMPLE_TEXTURE, combinedMatrix)
         }
 
         /**

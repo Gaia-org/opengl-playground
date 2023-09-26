@@ -6,6 +6,7 @@ object RenderObjDispatcher {
         ObjType.OBJ_SQUARE to SquareRenderObj(),
         ObjType.OBJ_CIRCLE to CircleRenderObj(),
         ObjType.OBJ_CUBE to CubeRenderObj(),
+        ObjType.OBJ_SIMPLE_TEXTURE to SimpleTextureRenderObj(),
     )
 
     fun initialize() {

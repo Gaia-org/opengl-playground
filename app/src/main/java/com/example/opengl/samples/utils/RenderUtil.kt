@@ -1,9 +1,15 @@
 package com.example.opengl.samples.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.opengl.GLES30
+import android.opengl.GLUtils
 import android.opengl.Matrix
 import android.util.Log
 import com.example.opengl.samples.render.TriangleRenderObj
+import java.io.IOException
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -75,6 +81,66 @@ object RenderUtil {
     fun getIdentityMatrix(size: Int = 16, offset: Int = 0): FloatArray {
         return FloatArray(size).also {
             Matrix.setIdentityM(it, offset)
+        }
+    }
+
+    fun loadTextureFromAssets(context: Context, fileName: String): Int {
+        val options = BitmapFactory.Options().apply {
+            inScaled = false // 禁用缩放
+        }
+
+        var inputStream: InputStream? = null
+        try {
+            inputStream = context.assets.open(fileName)
+            val bitmap = BitmapFactory.decodeStream(inputStream, null, options) ?: return -1
+            return loadTexture(bitmap)
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to load texture from assets: $fileName", e)
+        } finally {
+            inputStream?.close()
+        }
+    }
+
+    fun loadTexture(bitmap: Bitmap): Int {
+        val textureIds = IntArray(1)
+        GLES30.glGenTextures(1, textureIds, 0)
+        if (textureIds[0] == 0) {
+            throw RuntimeException("Failed to generate texture ID")
+        }
+
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureIds[0])
+//        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA,
+//            bitmap.width, bitmap.height, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, buffer)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+        GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
+        // 生成MIP贴图
+        //GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0)
+        bitmap.recycle()
+
+        return textureIds[0]
+    }
+
+    fun loadTextureFromAssets(fileName: String): Int {
+        val options = BitmapFactory.Options().apply {
+            inScaled = false // 禁用缩放
+        }
+
+        var inputStream: InputStream? = null
+        try {
+            // 获取较慢，而且第一次可能获取不到https://juejin.cn/post/6844903429983174669
+            inputStream = javaClass.classLoader?.getResourceAsStream(fileName)
+            if (inputStream == null) {
+                inputStream =  javaClass.classLoader?.getResourceAsStream(fileName)
+            }
+            Log.i("RenderUtil", "inputSteam: $inputStream")
+            val bitmap = BitmapFactory.decodeStream(inputStream, null, options) ?: return -1
+            return loadTexture(bitmap)
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to load texture from assets: $fileName", e)
+        } finally {
+            inputStream?.close()
         }
     }
 }

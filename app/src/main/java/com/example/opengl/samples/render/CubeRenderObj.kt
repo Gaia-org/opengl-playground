@@ -73,7 +73,7 @@ class CubeRenderObj : BaseRenderObj() {
     override fun onSurfaceChanged(width: Int, height: Int) {
         super.onSurfaceChanged(width, height)
         val ratio = width.toFloat() / height
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 3.0f, 20.0f)
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 3.0f, 16.0f)
     }
 
     override fun draw(mvpMatrix: FloatArray?) {
