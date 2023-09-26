@@ -2,12 +2,21 @@ package com.example.opengl.samples.render
 
 object RenderObjDispatcher {
     private val sRenderObjs = mapOf<Int, IRenderObj>(
-        ObjType.OBJ_TRIANGLE to TriangleRenderObj()
+        ObjType.OBJ_TRIANGLE to TriangleRenderObj(),
+        ObjType.OBJ_SQUARE to SquareRenderObj(),
+        ObjType.OBJ_CIRCLE to CircleRenderObj(),
+        ObjType.OBJ_CUBE to CubeRenderObj(),
     )
 
     fun initialize() {
         sRenderObjs.entries.forEach {
             it.value.initialize()
+        }
+    }
+
+    fun onSurfaceChanged(width: Int, height: Int) {
+        sRenderObjs.entries.forEach {
+            it.value.onSurfaceChanged(width, height)
         }
     }
 

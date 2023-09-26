@@ -94,6 +94,10 @@ class TriangleRenderObj : IRenderObj {
         GLES30.glDisableVertexAttribArray(colorHandle)
     }
 
+    override fun onSurfaceChanged(width: Int, height: Int) {
+
+    }
+
     companion object {
         private const val TAG = "Triangle"
         private const val COORDS_PER_VERTEX = 3

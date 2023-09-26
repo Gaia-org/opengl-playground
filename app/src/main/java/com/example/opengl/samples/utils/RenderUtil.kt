@@ -1,6 +1,7 @@
 package com.example.opengl.samples.utils
 
 import android.opengl.GLES30
+import android.opengl.Matrix
 import android.util.Log
 import com.example.opengl.samples.render.TriangleRenderObj
 import java.nio.ByteBuffer
@@ -70,4 +71,10 @@ object RenderUtil {
             put(floatAttrs)
             position(0)
         }
+
+    fun getIdentityMatrix(size: Int = 16, offset: Int = 0): FloatArray {
+        return FloatArray(size).also {
+            Matrix.setIdentityM(it, offset)
+        }
+    }
 }

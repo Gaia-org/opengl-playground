@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import com.example.opengl.samples.helper.Grid
 import com.example.opengl.samples.render.ObjType
 import com.example.opengl.samples.render.RenderObjDispatcher
+import com.example.opengl.samples.utils.RenderUtil
 import javax.microedition.khronos.opengles.GL10
 
 class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
@@ -98,6 +99,7 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             // 计算投影和视图变换
             val ratio = width.toFloat() / height
             Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 3.0f, 7.0f)
+            RenderObjDispatcher.onSurfaceChanged(width, height)
         }
 
         override fun onDrawFrame(unused: GL10) {
@@ -107,7 +109,8 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             appendRotateMatrix(combinedMatrix)
             // 绘制网格
             //grid.draw(mvpMatrix);
-            RenderObjDispatcher.renderObj(ObjType.OBJ_TRIANGLE, combinedMatrix)
+            // Render content obj
+            RenderObjDispatcher.renderObj(ObjType.OBJ_CUBE, combinedMatrix)
         }
 
         /**
