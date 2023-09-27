@@ -26,8 +26,8 @@ abstract class BaseRenderObj : IRenderObj {
         val vertexShader = createVertexShader()
         val fragmentShader = createFragmentShader()
         programId = RenderUtil.createProgram(vertexShader, fragmentShader)
-        initializeLocationArgs()
         GLES30.glUseProgram(programId)
+        initializeLocationArgs()
     }
 
     // 初始化顶点、片段着色器的顶点属性和uniform变量

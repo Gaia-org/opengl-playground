@@ -23,14 +23,17 @@ class CubeRenderObj : BaseRenderObj() {
     private val radius = 1.0f
 
     override var vertexCoords: FloatArray = floatArrayOf(
-        radius, radius, radius,     // 0
-        -radius, radius, radius,    // 1
-        -radius, -radius, radius,   // 2
-        radius, -radius, radius,    // 3
-        radius, radius, -radius,    // 4
-        -radius, radius, -radius,   // 5
-        -radius, -radius, -radius,  // 6
-        radius, -radius, -radius    // 7
+        // 前面
+        -1.0f, 1.0f, 1.0f,  // 0
+        -1.0f, -1.0f, 1.0f,  // 1
+        1.0f, -1.0f, 1.0f,  // 2
+        1.0f, 1.0f, 1.0f,  // 3
+
+        // 后面
+        -1.0f, 1.0f, -1.0f,  // 4
+        -1.0f, -1.0f, -1.0f,  // 5
+        1.0f, -1.0f, -1.0f,  // 6
+        1.0f, 1.0f, -1.0f  // 7
     )
 
     private val color = 1.0f
@@ -46,12 +49,12 @@ class CubeRenderObj : BaseRenderObj() {
     )
 
     private val drawOrder = byteArrayOf(
-        0, 1, 2, 0, 2, 3, //前面
-        0, 5, 1, 0, 5, 4, //上面
-        0, 7, 3, 0, 7, 4, //右面
-        6, 4, 5, 6, 4, 7, //后面
-        6, 3, 2, 6, 3, 7, //下面
-        6, 1, 2, 6, 1, 5 //左面
+        0, 1, 2, 0, 2, 3,  // 前面
+        4, 5, 6, 4, 6, 7,  // 后面
+        0, 3, 7, 0, 7, 4,  // 左侧
+        1, 2, 6, 1, 6, 5,  // 右侧
+        0, 1, 5, 0, 5, 4,  // 顶部
+        3, 2, 6, 3, 6, 7   // 底部
     )
 
     private var positionHandle: Int = -1

@@ -7,6 +7,7 @@ object RenderObjDispatcher {
         ObjType.OBJ_CIRCLE to CircleRenderObj(),
         ObjType.OBJ_CUBE to CubeRenderObj(),
         ObjType.OBJ_SIMPLE_TEXTURE to SimpleTextureRenderObj(),
+        ObjType.OBJ_TEXTURE_BOX to TextureBoxRenderObj()
     )
 
     fun initializeAll() {

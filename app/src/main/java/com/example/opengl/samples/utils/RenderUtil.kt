@@ -2,14 +2,10 @@ package com.example.opengl.samples.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.opengl.GLES30
 import android.opengl.GLUtils
 import android.opengl.Matrix
 import android.util.Log
-import com.example.opengl.samples.render.TriangleRenderObj
-import java.io.IOException
-import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -85,20 +81,8 @@ object RenderUtil {
     }
 
     fun loadTextureFromAssets(context: Context, fileName: String): Int {
-        val options = BitmapFactory.Options().apply {
-            inScaled = false // 禁用缩放
-        }
-
-        var inputStream: InputStream? = null
-        try {
-            inputStream = context.assets.open(fileName)
-            val bitmap = BitmapFactory.decodeStream(inputStream, null, options) ?: return -1
-            return loadTexture(bitmap)
-        } catch (e: IOException) {
-            throw RuntimeException("Failed to load texture from assets: $fileName", e)
-        } finally {
-            inputStream?.close()
-        }
+        val bitmap = ResourceUtils.getBitmapFromAssets(context, fileName) ?: return -1
+        return loadTexture(bitmap)
     }
 
     fun loadTexture(bitmap: Bitmap): Int {
@@ -125,25 +109,31 @@ object RenderUtil {
         return textureIds[0]
     }
 
-    fun loadTextureFromAssets(fileName: String): Int {
-        val options = BitmapFactory.Options().apply {
-            inScaled = false // 禁用缩放
+    fun loadMultiTextures(context: Context, resArray: List<String>): IntArray {
+        val bitmaps = Array(resArray.size) { index ->
+            ResourceUtils.getBitmapFromAssets(context, resArray[index])
         }
-
-        var inputStream: InputStream? = null
-        try {
-            // 获取较慢，而且第一次可能获取不到https://juejin.cn/post/6844903429983174669
-            inputStream = javaClass.classLoader?.getResourceAsStream(fileName)
-            if (inputStream == null) {
-                inputStream =  javaClass.classLoader?.getResourceAsStream(fileName)
+        val textureIds = IntArray(resArray.size)
+        GLES30.glGenTextures(resArray.size, textureIds, 0)
+        for (i in resArray.indices) {
+            val bitmap = bitmaps[i]
+            val textureId = textureIds[i]
+            if (bitmap == null) {
+                Log.e(TAG, "loadMultiTextures, bitmap get null: $textureId")
             }
-            Log.i("RenderUtil", "inputSteam: $inputStream")
-            val bitmap = BitmapFactory.decodeStream(inputStream, null, options) ?: return -1
-            return loadTexture(bitmap)
-        } catch (e: IOException) {
-            throw RuntimeException("Failed to load texture from assets: $fileName", e)
-        } finally {
-            inputStream?.close()
+            // Bind texture to GL
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId)
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR)
+            GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+            // Load bitmap into texture
+            GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
+            // 纹理缩小模式设置 mipmap 技术来提高渲染性能
+            GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
+            // Unbind texture.
+            GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0)
+            bitmap?.recycle()
         }
+        return textureIds
     }
+
 }

@@ -24,5 +24,6 @@ interface ObjType {
         const val OBJ_CIRCLE = 5
         const val OBJ_CUBE = 6
         const val OBJ_SIMPLE_TEXTURE = 12
+        const val OBJ_TEXTURE_BOX = 13
     }
 }
