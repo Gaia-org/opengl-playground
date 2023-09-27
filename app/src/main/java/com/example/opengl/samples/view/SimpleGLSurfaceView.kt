@@ -78,7 +78,7 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
             grid.init()
             //triangle.initialize()
-            RenderObjDispatcher.initialize()
+            RenderObjDispatcher.initialize(ObjType.OBJ_TRIANGLE)
             val extensions = GLES30.glGetString(GLES30.GL_EXTENSIONS)
             Log.i(TAG, "get available opengl extensions: $extensions")
             GLES30.glGetString(GLES30.GL_VERSION).also {
@@ -110,7 +110,7 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             // 绘制网格
             //grid.draw(mvpMatrix);
             // Render content obj
-            RenderObjDispatcher.renderObj(ObjType.OBJ_SIMPLE_TEXTURE, combinedMatrix)
+            RenderObjDispatcher.renderObj(ObjType.OBJ_TRIANGLE, combinedMatrix)
         }
 
         /**

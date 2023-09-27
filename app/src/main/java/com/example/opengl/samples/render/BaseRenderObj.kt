@@ -76,6 +76,7 @@ abstract class BaseRenderObj : IRenderObj {
     companion object {
         const val COORDS_PER_VERTEX = 3
         const val VALUE_PER_COLOR = 4
+        const val COORDS_PER_TEXTURE = 2
     }
 
 }

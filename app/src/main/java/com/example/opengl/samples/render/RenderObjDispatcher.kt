@@ -9,9 +9,15 @@ object RenderObjDispatcher {
         ObjType.OBJ_SIMPLE_TEXTURE to SimpleTextureRenderObj(),
     )
 
-    fun initialize() {
+    fun initializeAll() {
         sRenderObjs.entries.forEach {
             it.value.initialize()
+        }
+    }
+
+    fun initialize(type: Int) {
+        if (sRenderObjs.containsKey(type)) {
+            sRenderObjs[type]?.initialize()
         }
     }
 

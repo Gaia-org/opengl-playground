@@ -109,13 +109,16 @@ object RenderUtil {
         }
 
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureIds[0])
-//        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA,
-//            bitmap.width, bitmap.height, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, buffer)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
         GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
         GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
         // 生成MIP贴图
-        //GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
+        GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
+//        val b = ByteBuffer.allocate(bitmap.width * bitmap.height * 4)
+//        bitmap.copyPixelsToBuffer(b)
+//        b.position(0)
+//        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, bitmap.width, bitmap.height,
+//            0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, b)
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0)
         bitmap.recycle()
 
