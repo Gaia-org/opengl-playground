@@ -2,6 +2,8 @@ package com.example.opengl.samples.render
 
 import android.opengl.GLES30
 import android.util.Log
+import com.example.opengl.samples.render.base.BaseRenderObj
+import com.example.opengl.samples.render.base.ObjType
 import kotlin.math.cos
 import kotlin.math.sin
 

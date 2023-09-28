@@ -1,9 +1,12 @@
 package com.example.opengl.samples.render
 
+import android.graphics.Rect
 import android.opengl.GLES30
 import android.opengl.Matrix
 import android.util.Log
 import com.example.opengl.samples.SampleApplication
+import com.example.opengl.samples.render.base.BaseRenderObj
+import com.example.opengl.samples.render.base.ObjType
 import com.example.opengl.samples.utils.RenderUtil
 import java.nio.FloatBuffer
 
@@ -74,9 +77,10 @@ class SimpleTextureRenderObj : BaseRenderObj() {
     private var renderWidth: Int = 0
     private var renderHeight: Int = 0
     private var transformMatrix: FloatArray = FloatArray(16)
+    private var renderRect: Rect = Rect()
 
     override fun initializeLocationArgs() {
-        mTextureId = RenderUtil.loadTextureFromAssets(SampleApplication.getInstance(), "texture_img.png")
+        mTextureId = RenderUtil.loadTextureFromAssets(SampleApplication.getInstance(), "texture_img.png", renderRect)
         Log.i(TAG, "loadTexture, id: $mTextureId")
         positionHandle = glGetAttribLocation(programId, "aPosition")
         matrixHandle = glGetUniformLocation(programId, "uMVPMatrix")
@@ -91,10 +95,7 @@ class SimpleTextureRenderObj : BaseRenderObj() {
         get() = ObjType.OBJ_SIMPLE_TEXTURE
 
     override fun draw(mvpMatrix: FloatArray?) {
-//        Matrix.multiplyMM(mvpMatrix, 0, mvpMatrix, 0, transformMatrix, 0)
-//        mvpMatrix?.let {
-//            GLES30.glUniformMatrix4fv(matrixHandle, 1, false, it, 0)
-//        }
+        // 此处也可通过按照比例设定viewPort尺寸进而限制显示范围(二者选其一，建议在开发过程中调整viewPort尺寸)
         GLES30.glUniformMatrix4fv(matrixHandle, 1, false, transformMatrix, 0)
         GLES30.glEnableVertexAttribArray(positionHandle)
         GLES30.glVertexAttribPointer(
@@ -144,6 +145,10 @@ class SimpleTextureRenderObj : BaseRenderObj() {
         }
         Matrix.orthoM(matrix, 0, -w, w, -h, h, -1f, 1f)
     }
+
+    fun getTextureId(): Int = mTextureId
+
+    fun getRenderRect(): Rect = renderRect
 
     companion object {
         private const val TAG = "SimpleTextureRenderObj"

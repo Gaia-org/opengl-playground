@@ -2,6 +2,7 @@ package com.example.opengl.samples.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Rect
 import android.opengl.GLES30
 import android.opengl.GLUtils
 import android.opengl.Matrix
@@ -80,8 +81,9 @@ object RenderUtil {
         }
     }
 
-    fun loadTextureFromAssets(context: Context, fileName: String): Int {
+    fun loadTextureFromAssets(context: Context, fileName: String, sizeRect: Rect? = null): Int {
         val bitmap = ResourceUtils.getBitmapFromAssets(context, fileName) ?: return -1
+        sizeRect?.set(0, 0, bitmap.width, bitmap.height)
         return loadTexture(bitmap)
     }
 
@@ -93,16 +95,21 @@ object RenderUtil {
         }
 
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureIds[0])
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
-        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+//        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR)
+//        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR)
+        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST.toFloat())
+        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR.toFloat())
+        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE.toFloat())
+        GLES30.glTexParameterf(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE.toFloat())
         GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, bitmap, 0)
         // 生成MIP贴图
         GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D)
-//        val b = ByteBuffer.allocate(bitmap.width * bitmap.height * 4)
-//        bitmap.copyPixelsToBuffer(b)
-//        b.position(0)
-//        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, bitmap.width, bitmap.height,
-//            0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, b)
+        // Or use this code as same implementation.
+        /*val b = ByteBuffer.allocate(bitmap.width * bitmap.height * 4)
+        bitmap.copyPixelsToBuffer(b)
+        b.position(0)
+        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, bitmap.width, bitmap.height,
+            0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, b)*/
         GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0)
         bitmap.recycle()
 

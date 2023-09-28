@@ -8,9 +8,10 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
 import com.example.opengl.samples.helper.Grid
-import com.example.opengl.samples.render.ObjType
-import com.example.opengl.samples.render.RenderObjDispatcher
-import com.example.opengl.samples.utils.RenderUtil
+import com.example.opengl.samples.render.base.ObjType
+import com.example.opengl.samples.render.base.RenderObjDispatcher
+import com.example.opengl.samples.render.TextureBoxRenderObj
+import com.example.opengl.samples.utils.TouchHelper
 import javax.microedition.khronos.opengles.GL10
 
 class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
@@ -24,7 +25,8 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
         setEGLContextClientVersion(3)
         renderer = MyRenderer()
         setRenderer(renderer)
-         renderMode = RENDERMODE_WHEN_DIRTY
+        renderMode = RENDERMODE_WHEN_DIRTY
+        TouchHelper.bindView(this)
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
@@ -36,36 +38,43 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
         val y: Float = e.y
 
         when (e.action) {
+            MotionEvent.ACTION_DOWN -> {
+                previousX = x
+                previousY = y
+            }
             MotionEvent.ACTION_MOVE -> {
-
-                var dx: Float = x - previousX
-                var dy: Float = y - previousY
-
-                // reverse direction of rotation above the mid-line
-                if (y > height / 2) {
-                    dx *= -1
-                }
-
-                // reverse direction of rotation to left of the mid-line
-                if (x < width / 2) {
-                    dy *= -1
-                }
-
-                renderer.angle += (dx + dy) * TOUCH_SCALE_FACTOR
-                requestRender()
+                val dx: Float = x - previousX
+                val dy: Float = previousY - y
+                updateRotateAngle(dx, dy)
             }
         }
-
-        previousX = x
-        previousY = y
         return true
+    }
+
+    private fun updateRotateAngle(dx: Float, dy: Float) {
+        TouchHelper.getSweepRatio()
+        val axis = TouchHelper.getRotationAxis(dx, dy)
+        val angle = TouchHelper.getRotationAngle(dx, dy)
+        renderer.angle = angle
+        renderer.axis = axis
+        renderer.updateTxtBoxRotateArgs()
+        requestRender()
+    }
+
+    private fun resetRotateAngle() {
+        renderer.angle = 0f
+        renderer.axis = floatArrayOf(0f, 0f, 1f)
+        renderer.updateTxtBoxRotateArgs()
+        requestRender()
     }
 
 
     private inner class MyRenderer : Renderer {
         @Volatile
         var angle: Float = 0f
-//        private val triangle: TriangleRenderObj = TriangleRenderObj()
+        @Volatile
+        var axis: FloatArray = floatArrayOf(0f, 0f, 1f)
+
         private val projectionMatrix = FloatArray(16)
         private val viewMatrix = FloatArray(16)
         // vPMatrix is an abbreviation for "Model View Projection Matrix"
@@ -77,10 +86,9 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
         override fun onSurfaceCreated(unused: GL10?, p1: javax.microedition.khronos.egl.EGLConfig?) {
             GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
             // 开启深度测试，避免出现遮挡
-            unused?.glEnable(GLES30.GL_DEPTH_TEST)
-            grid.init()
-            //triangle.initialize()
-            RenderObjDispatcher.initialize(ObjType.OBJ_TEXTURE_BOX)
+//            unused?.glEnable(GLES30.GL_DEPTH_TEST) // Note: 二维模型渲染下关闭
+            //grid.init()
+            RenderObjDispatcher.initialize(ObjType.OBJ_SIMPLE_TEXTURE)
             val extensions = GLES30.glGetString(GLES30.GL_EXTENSIONS)
             Log.i(TAG, "get available opengl extensions: $extensions")
             GLES30.glGetString(GLES30.GL_VERSION).also {
@@ -112,7 +120,7 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             // 绘制网格
             //grid.draw(mvpMatrix);
             // Render content obj
-            RenderObjDispatcher.renderObj(ObjType.OBJ_TEXTURE_BOX, combinedMatrix)
+            RenderObjDispatcher.renderObj(ObjType.OBJ_SIMPLE_TEXTURE, combinedMatrix)
         }
 
         /**
@@ -122,12 +130,19 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             // Create a rotation transformation for the triangle
             val time = SystemClock.uptimeMillis() % 4000L
             //val angle = 0.090f * time.toInt()
-            Matrix.setRotateM(rotationMatrix, 0, angle, 0f, 0f, -1.0f)
+            //Matrix.setRotateM(rotationMatrix, 0, angle, 0f, 0f, -1.0f)
+            Matrix.setRotateM(rotationMatrix, 0, angle, axis[0], axis[1], axis[2])
             // Combine the rotation matrix with the projection and camera view
             // Note that the vPMatrix factor *must be first* in order
             // for the matrix multiplication product to be correct.
             Matrix.multiplyMM(scratch, 0, vPMatrix, 0, rotationMatrix, 0)
 
+        }
+
+        fun updateTxtBoxRotateArgs() {
+            val render = RenderObjDispatcher.getRenderObj(ObjType.OBJ_TEXTURE_BOX) as TextureBoxRenderObj
+            render.mRotateAngle = angle
+            render.mRotateAxis = axis
         }
     }
 

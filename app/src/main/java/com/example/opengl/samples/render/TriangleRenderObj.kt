@@ -2,6 +2,8 @@ package com.example.opengl.samples.render
 
 import android.opengl.GLES30
 import android.util.Log
+import com.example.opengl.samples.render.base.IRenderObj
+import com.example.opengl.samples.render.base.ObjType
 import com.example.opengl.samples.utils.RenderUtil
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

@@ -2,6 +2,8 @@ package com.example.opengl.samples.render
 
 import android.opengl.GLES30
 import android.opengl.Matrix
+import com.example.opengl.samples.render.base.BaseRenderObj
+import com.example.opengl.samples.render.base.ObjType
 import com.example.opengl.samples.utils.RenderUtil
 // TODO: why some planes of cube not rendered
 class CubeRenderObj : BaseRenderObj() {

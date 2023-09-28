@@ -4,6 +4,8 @@ import android.opengl.GLES30
 import android.opengl.Matrix
 import android.util.Log
 import com.example.opengl.samples.SampleApplication
+import com.example.opengl.samples.render.base.BaseRenderObj
+import com.example.opengl.samples.render.base.ObjType
 import com.example.opengl.samples.utils.RenderUtil
 import java.nio.FloatBuffer
 
@@ -123,7 +125,8 @@ class TextureBoxRenderObj : BaseRenderObj() {
     private lateinit var textureBuffer: FloatBuffer
 
     private var projectionMatrix = RenderUtil.getIdentityMatrix()
-    private var mRotateAngle = 0f
+    var mRotateAngle = 0f
+    var mRotateAxis = floatArrayOf(0f, 0f, 1f)
 
     override fun initializeLocationArgs() {
         mTextureIds = RenderUtil.loadMultiTextures(SampleApplication.getInstance(), mTextureRes)
@@ -185,14 +188,15 @@ class TextureBoxRenderObj : BaseRenderObj() {
     override fun onSurfaceChanged(width: Int, height: Int) {
         super.onSurfaceChanged(width, height)
         val ratio = width.toFloat() / height
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 3.0f, 20.0f)
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1.0f, 1.0f, 3.0f, 16.0f)
     }
 
     private fun mvpMatrixTransform() {
         val modelMatrix = RenderUtil.getIdentityMatrix()
         val viewMatrix = RenderUtil.getIdentityMatrix()
-        mRotateAngle = (mRotateAngle + 2) % 360
-        Matrix.rotateM(modelMatrix, 0, mRotateAngle, -1f, -1f, 1f)
+        // mRotateAngle = (mRotateAngle + 2) % 360
+        // Matrix.rotateM(modelMatrix, 0, mRotateAngle, -1f, -1f, 1f)
+        Matrix.rotateM(modelMatrix, 0, mRotateAngle, mRotateAxis[0], mRotateAxis[1], mRotateAxis[2])
         Matrix.setLookAtM(viewMatrix, 0, 0f, 5f, 10f,
             0f, 0f, 0f, 0f, 1f, 0f)
         val mvpMatrix = FloatArray(16)

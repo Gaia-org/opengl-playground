@@ -1,4 +1,4 @@
-package com.example.opengl.samples.render
+package com.example.opengl.samples.render.base
 
 interface IRenderObj {
     val objType: Int

@@ -1,4 +1,6 @@
-package com.example.opengl.samples.render
+package com.example.opengl.samples.render.base
+
+import com.example.opengl.samples.render.*
 
 object RenderObjDispatcher {
     private val sRenderObjs = mapOf<Int, IRenderObj>(
@@ -43,6 +45,8 @@ object RenderObjDispatcher {
     private fun renderObj(renderObj: IRenderObj, mvpMatrix: FloatArray? = null) {
         renderObj.draw(mvpMatrix)
     }
+
+    fun getRenderObj(type: Int): IRenderObj? = sRenderObjs[type]
 
     fun getAvailableTypes(): List<Int> = sRenderObjs.keys.toList()
 

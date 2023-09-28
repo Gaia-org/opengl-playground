@@ -1,4 +1,4 @@
-package com.example.opengl.samples.render
+package com.example.opengl.samples.render.base
 
 import android.opengl.GLES30
 import com.example.opengl.samples.utils.RenderUtil
