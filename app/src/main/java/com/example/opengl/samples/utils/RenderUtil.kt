@@ -143,4 +143,18 @@ object RenderUtil {
         return textureIds
     }
 
+    fun createTextureAndBindFramebuffer(width: Int, height: Int): Int {
+        val iArr = intArrayOf(0)
+        GLES30.glGenTextures(1, iArr, 0)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, iArr[0])
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, 10240, 9728)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, 10241, 9728)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, 10242, 10497)
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, 10243, 10497)
+        GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, 6408, width, height, 0, 6408, 5121, null)
+        GLES30.glBindFramebuffer(36160, iArr[0])
+        GLES30.glFramebufferTexture2D(36160, 36064, 3553, iArr[0], 0)
+        return iArr[0]
+    }
+
 }

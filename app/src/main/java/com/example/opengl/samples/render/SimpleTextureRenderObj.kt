@@ -59,6 +59,7 @@ class SimpleTextureRenderObj : BaseRenderObj() {
         1f, -1f, 0f // 3
     )
     // 纹理坐标(坐标原点在左下角)
+    // Note: 注意顶点坐标与纹理坐标的映射关系（如果一一对应则会上下颠倒，需要取反，比如顶点的左下角需要对应纹理坐标的左上角）
     private val textureCoords: FloatArray = floatArrayOf(
         1f, 0f,
         0f, 0f,

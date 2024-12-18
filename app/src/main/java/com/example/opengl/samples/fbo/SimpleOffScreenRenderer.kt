@@ -9,6 +9,7 @@ import com.example.opengl.samples.helper.EGLDisplayHelper
 import com.example.opengl.samples.render.base.ObjType
 import com.example.opengl.samples.render.base.RenderObjDispatcher
 import com.example.opengl.samples.render.SimpleTextureRenderObj
+import com.example.opengl.samples.utils.RenderUtil
 import com.example.opengl.samples.utils.UiDisplayUtils
 import java.nio.ByteBuffer
 
@@ -18,6 +19,7 @@ import java.nio.ByteBuffer
 class SimpleOffScreenRenderer {
     private lateinit var context: Context
     private var mViewRect: Rect = Rect()
+    private var srcTextureId = -1
 
     fun initialize(context: Context) {
         this.context = context
@@ -31,6 +33,7 @@ class SimpleOffScreenRenderer {
         GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
         // 开启深度测试，避免出现遮挡
         GLES30.glEnable(GLES30.GL_DEPTH_TEST)
+        srcTextureId = RenderUtil.createTextureAndBindFramebuffer(screenW, screenH)
         RenderObjDispatcher.initialize(ObjType.OBJ_SIMPLE_TEXTURE)
         val viewRect = (RenderObjDispatcher.getRenderObj(ObjType.OBJ_SIMPLE_TEXTURE) as SimpleTextureRenderObj).getRenderRect()
         // Note: 由于下面绘制过程中已经设置了矩阵变换来适配显示区域，所以此处暂无需设置窗口尺寸，否则画面会扭曲
@@ -44,7 +47,7 @@ class SimpleOffScreenRenderer {
         val textureId = (RenderObjDispatcher.getRenderObj(ObjType.OBJ_SIMPLE_TEXTURE) as SimpleTextureRenderObj).getTextureId()
         Log.i(TAG, "initialize, textureId: $textureId")
         // 将纹理附着到帧缓存
-        GLES30.glFramebufferTexture2D(GLES30.GL_FRAMEBUFFER, GLES30.GL_COLOR_ATTACHMENT0, GLES30.GL_TEXTURE_2D, textureId, 0)
+        GLES30.glFramebufferTexture2D(GLES30.GL_FRAMEBUFFER, GLES30.GL_COLOR_ATTACHMENT0, GLES30.GL_TEXTURE_2D, srcTextureId, 0)
     }
 
     fun onSurfaceChanged(width: Int, height: Int) {

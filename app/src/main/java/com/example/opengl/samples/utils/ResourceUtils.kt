@@ -3,8 +3,10 @@ package com.example.opengl.samples.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
+import java.io.InputStreamReader
 
 object ResourceUtils {
     fun getBitmapFromAssets(context: Context, path: String): Bitmap? {
@@ -39,5 +41,22 @@ object ResourceUtils {
         } finally {
             inputStream?.close()
         }
+    }
+
+    fun readShaderFromResource(context: Context, shaderId: Int): String {
+        val inputStream: InputStream = context.resources.openRawResource(shaderId)
+        val br = BufferedReader(InputStreamReader(inputStream))
+        var line: String?
+        val sb = StringBuilder()
+        try {
+            while (br.readLine().also { line = it } != null) {
+                sb.append(line)
+                sb.append("\n")
+            }
+            br.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return sb.toString()
     }
 }

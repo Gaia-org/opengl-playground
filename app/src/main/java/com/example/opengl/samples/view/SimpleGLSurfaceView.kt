@@ -86,9 +86,9 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
         override fun onSurfaceCreated(unused: GL10?, p1: javax.microedition.khronos.egl.EGLConfig?) {
             GLES30.glClearColor(1.0f, 1.0f, 1.0f, 1.0f)
             // 开启深度测试，避免出现遮挡
-//            unused?.glEnable(GLES30.GL_DEPTH_TEST) // Note: 二维模型渲染下关闭
+            unused?.glEnable(GLES30.GL_DEPTH_TEST) // Note: 二维模型渲染下关闭
             //grid.init()
-            RenderObjDispatcher.initialize(ObjType.OBJ_SIMPLE_TEXTURE)
+            RenderObjDispatcher.initialize(ObjType.OBJ_TEXTURE_BOX)
             val extensions = GLES30.glGetString(GLES30.GL_EXTENSIONS)
             Log.i(TAG, "get available opengl extensions: $extensions")
             GLES30.glGetString(GLES30.GL_VERSION).also {
@@ -120,7 +120,7 @@ class SimpleGLSurfaceView(context: Context) : GLSurfaceView(context) {
             // 绘制网格
             //grid.draw(mvpMatrix);
             // Render content obj
-            RenderObjDispatcher.renderObj(ObjType.OBJ_SIMPLE_TEXTURE, combinedMatrix)
+            RenderObjDispatcher.renderObj(ObjType.OBJ_TEXTURE_BOX, combinedMatrix)
         }
 
         /**
